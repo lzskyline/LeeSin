@@ -1,0 +1,354 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* LOL风格字体 - Beaufort for LOL */
+@font-face {
+  font-family: 'Beaufort for LOL';
+  src: url('https://raw.githubusercontent.com/AmineMarnissi/leagueoflegends-template/main/fonts/Beaufort/BeaufortforLOL-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Beaufort for LOL';
+  src: url('https://raw.githubusercontent.com/AmineMarnissi/leagueoflegends-template/main/fonts/Beaufort/BeaufortforLOL-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* 基础样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Fira Code', 'Segoe UI', sans-serif;
+  background: 
+    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(200, 155, 60, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 100% 100% at 80% 80%, rgba(10, 200, 185, 0.02) 0%, transparent 40%),
+    linear-gradient(180deg, #0A1428 0%, #010A13 100%);
+  color: #F0E6D2;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 滚动条样式 - LOL风格 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, rgba(10, 20, 40, 0.8) 0%, rgba(1, 10, 19, 0.9) 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(120, 90, 40, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #C89B3C 0%, #785A28 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(200, 155, 60, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #D4A94A 0%, #8A6830 100%);
+  box-shadow: 0 0 10px rgba(200, 155, 60, 0.5);
+}
+
+/* 选中文本颜色 */
+::selection {
+  background: rgba(200, 155, 60, 0.4);
+  color: #F0E6D2;
+}
+
+/* 焦点轮廓 */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid #C89B3C;
+  outline-offset: 2px;
+  box-shadow: 0 0 15px rgba(200, 155, 60, 0.3);
+}
+
+/* 动画关键帧 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: rgba(200, 155, 60, 0.5);
+    box-shadow: 0 0 10px rgba(200, 155, 60, 0.2);
+  }
+  50% {
+    border-color: rgba(200, 155, 60, 1);
+    box-shadow: 0 0 25px rgba(200, 155, 60, 0.5);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-pulse-border {
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* LOL卡片组件 - 增强版 */
+.lol-card {
+  background: 
+    linear-gradient(135deg, rgba(30, 35, 40, 0.6) 0%, rgba(10, 20, 40, 0.9) 50%, rgba(1, 10, 19, 0.95) 100%);
+  border: 1px solid #785A28;
+  border-radius: 4px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(200, 155, 60, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 卡片顶部金色光晕 */
+.lol-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(200, 155, 60, 0.6) 50%, transparent 100%);
+}
+
+.lol-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lol-card-hover:hover {
+  border-color: #C89B3C;
+  box-shadow: 
+    0 8px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(200, 155, 60, 0.15),
+    inset 0 1px 0 rgba(200, 155, 60, 0.2);
+  transform: translateY(-2px);
+}
+
+/* LOL按钮 - 增强版 */
+.lol-button {
+  background: 
+    linear-gradient(180deg, #1E2328 0%, #0A1428 50%, #0A0F14 100%);
+  border: 2px solid #785A28;
+  color: #C89B3C;
+  font-family: 'Beaufort for LOL', serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 10px 28px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.lol-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(200, 155, 60, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.lol-button:hover::before {
+  left: 100%;
+}
+
+.lol-button:hover {
+  border-color: #C89B3C;
+  background: linear-gradient(180deg, #2A2F35 0%, #0F1923 50%, #0A1428 100%);
+  box-shadow: 
+    0 0 20px rgba(200, 155, 60, 0.3),
+    inset 0 1px 0 rgba(200, 155, 60, 0.2);
+  color: #F0E6D2;
+}
+
+.lol-button:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 10px rgba(200, 155, 60, 0.2);
+}
+
+.lol-button-primary {
+  background: linear-gradient(180deg, #C89B3C 0%, #A07628 50%, #785A28 100%);
+  color: #010A13;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.lol-button-primary:hover {
+  background: linear-gradient(180deg, #D4A94A 0%, #B8862E 50%, #8A6830 100%);
+  color: #010A13;
+}
+
+/* LOL输入框 */
+.lol-input {
+  background: rgba(10, 20, 40, 0.9);
+  border: 1px solid #463714;
+  color: #F0E6D2;
+  padding: 10px 14px;
+  border-radius: 4px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.lol-input:focus {
+  border-color: #C89B3C;
+  box-shadow: 
+    0 0 15px rgba(200, 155, 60, 0.2),
+    inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.lol-input::placeholder {
+  color: #5B5A56;
+}
+
+/* LOL标题样式 */
+.lol-title {
+  font-family: 'Beaufort for LOL', serif;
+  color: #C89B3C;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 分割线 */
+.lol-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #785A28 20%, #C89B3C 50%, #785A28 80%, transparent 100%);
+}
+
+/* 金色边框效果 */
+.gold-border {
+  position: relative;
+}
+
+.gold-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, #C89B3C, #785A28, #C89B3C) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* 窗口拖拽区域 */
+.drag-region {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* 图片加载占位效果 */
+.img-loading {
+  background: linear-gradient(90deg, #1E2328 25%, #2A2F35 50%, #1E2328 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* 胜利/失败状态增强 */
+.win-glow {
+  box-shadow: 
+    0 0 15px rgba(10, 200, 185, 0.2),
+    inset 0 0 20px rgba(10, 200, 185, 0.05);
+}
+
+.lose-glow {
+  box-shadow: 
+    0 0 15px rgba(231, 76, 60, 0.2),
+    inset 0 0 20px rgba(231, 76, 60, 0.05);
+}
+
+/* 模式标签颜色增强 */
+.mode-ranked {
+  background: linear-gradient(135deg, rgba(200, 155, 60, 0.2) 0%, rgba(200, 155, 60, 0.1) 100%);
+  border: 1px solid rgba(200, 155, 60, 0.3);
+}
+
+.mode-aram {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.mode-arena {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(168, 85, 247, 0.1) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.mode-aram-mayhem {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(34, 211, 238, 0.1) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+}

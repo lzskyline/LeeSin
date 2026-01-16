@@ -1,0 +1,77 @@
+# 依赖
+node_modules/
+.pnp
+.pnp.js
+
+# 测试
+coverage/
+
+# 生产构建
+/dist/
+/dist-electron/
+/release/
+build/
+
+# 环境变量
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# IDE
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS生成文件
+Thumbs.db
+Desktop.ini
+
+# Electron相关
+app/dist/
+app/dist-electron/
+
+# TypeScript
+*.tsbuildinfo
+
+# 缓存
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.parcel-cache/
+
+# 临时文件
+*.log
+*.tmp
+.cache/
+.temp/
+
+# 本地配置文件
+localConfig.json
+config.local.js
+
+# 打包工具
+.electron-builder/
+
+# 其他
+*.pyc
+__pycache__/
+*.pid
+*.seed
+*.tgz
