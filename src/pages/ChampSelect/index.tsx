@@ -12,7 +12,6 @@ export default function ChampSelect() {
   const { champions } = useDataStore()
   const navigate = useNavigate()
   const [selectedPlayer, setSelectedPlayer] = useState<ChampSelectPlayer | null>(null)
-  const [redirectedChampionId, setRedirectedChampionId] = useState<number>(0)
 
   const championsMap = new Map(champions.map(c => [c.id, c]))
 
@@ -64,20 +63,8 @@ export default function ChampSelect() {
            }
         }
       }
-
-      // 检查本地玩家是否已锁定英雄，如果是则自动跳转到出装页面
-      // 必须确保当前确实处于选人阶段，防止退出房间后误跳转
-      if (phase === 'ChampSelect' && localPlayer && localPlayer.championId > 0 && hasLocalPlayerLocked(session)) {
-        if (redirectedChampionId !== localPlayer.championId) {
-          setRedirectedChampionId(localPlayer.championId)
-          const normalizedPos = normalizePosition(localPlayer.assignedPosition)
-          setTimeout(() => {
-            navigate(`/build?championId=${localPlayer.championId}&position=${normalizedPos}`)
-          }, 500)
-        }
-      }
     }
-  }, [session, navigate, redirectedChampionId, phase])
+  }, [session, navigate, phase])
   
   if (!session) {
     return (
@@ -307,41 +294,5 @@ function normalizePosition(position?: string): string {
     support: 'support',
   }
   return map[position.toLowerCase()] || 'mid'
-}
-
-// 判断本地玩家是否已锁定英雄
-function hasLocalPlayerLocked(session: ChampSelectSession): boolean {
-  if (!session) return false
-  
-  // 检查是否处于 BAN_PICK 之后的阶段
-  if (session.timer.phase === 'FINALIZATION' || session.timer.phase === 'GAME_START') {
-    return true
-  }
-  
-  // 检查是否有未完成的 pick 动作
-  const myAction = findMyAction(session)
-  if (myAction && myAction.type === 'pick' && !myAction.completed) {
-    return false
-  }
-  
-  // 检查是否已经选择了英雄
-  const localPlayer = session.myTeam.find(p => p.cellId === session.localPlayerCellId)
-  if (!localPlayer || localPlayer.championId === 0) {
-    return false
-  }
-
-  // 遍历所有我的 pick 动作，检查是否有已完成的
-  let hasCompletedPick = false
-  for (const round of session.actions) {
-    for (const action of round) {
-      if (action.actorCellId === session.localPlayerCellId && action.type === 'pick') {
-        if (action.completed) {
-          hasCompletedPick = true
-        }
-      }
-    }
-  }
-  
-  return hasCompletedPick
 }
 

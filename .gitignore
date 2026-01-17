@@ -10,7 +10,7 @@ coverage/
 /dist/
 /dist-electron/
 /release/
-build/
+/build/
 
 # 环境变量
 .env

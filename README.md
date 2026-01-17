@@ -82,7 +82,7 @@
 
 ### 使用预构建版本
 1. 前往 [Releases](https://github.com/lzskyline/LeeSin/releases) 页面
-2. 下载最新版本的 `.exe` 文件
+2. 下载最新版本的 `.exe` 文件（Windows）或 `.dmg` 文件（macOS）
 3. 解压并运行 `LeeSin.exe` 即可
 
 ### 从源码构建
@@ -103,6 +103,8 @@ npm run build
 
 # 本地打包测试
 npm run package:win    # Windows
+npm run package:mac    # macOS
+npm run package:linux  # Linux
 ```
 
 ### 发布新版本
@@ -114,7 +116,7 @@ npm run package:win    # Windows
 git tag v1.0.0
 git push origin v1.0.0
 
-# GitHub Actions会自动构建并发布Windows版本
+# GitHub Actions会自动构建并发布所有平台的版本
 ```
 
 详细发布说明请查看 [RELEASE.md](RELEASE.md)
@@ -143,7 +145,7 @@ git push origin v1.0.0
 
 2. **跨平台支持**
    - 从Python/PyQt转向Electron技术栈
-   - 支持Windows、macOS、Linux
+   - 专注Windows平台优化
    - 更现代的UI/UX设计
 
 3. **性能优化**

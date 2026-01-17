@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'  # 匹配v开头的tag，如v1.0.0, v2.1.3
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -40,6 +43,8 @@ jobs:
 
       - name: Build and package
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
           npm run package:${{ matrix.package_suffix }}
