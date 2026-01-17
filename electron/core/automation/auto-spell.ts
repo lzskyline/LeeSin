@@ -64,7 +64,7 @@ export class AutoSpell {
   }
   
   private async applyDefaultSpells(position: string): Promise<void> {
-    let spell1 = SUMMONER_SPELL_IDS.FLASH
+    const spell1 = SUMMONER_SPELL_IDS.FLASH
     let spell2 = SUMMONER_SPELL_IDS.IGNITE
     
     // 根据位置选择默认技能

@@ -21,7 +21,6 @@ interface ServiceProviders {
 export function registerIPCHandlers(providers: ServiceProviders): void {
   const {
     getLCUClient,
-    getLCUWebSocket,
     getGameFlowMonitor,
     getConfigService,
     getOPGGClient,

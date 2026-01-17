@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { exec, execSync, spawn } from 'child_process'
+import { exec, execSync } from 'child_process'
 import { promisify } from 'util'
 import { readFile } from 'fs/promises'
 import { existsSync, readdirSync } from 'fs'

@@ -11,7 +11,7 @@
   "win": {
     "target": [
       {
-        "target": "nsis",
+        "target": "7z",
         "arch": ["x64"]
       }
     ],

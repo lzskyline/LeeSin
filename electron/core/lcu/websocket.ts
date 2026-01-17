@@ -56,7 +56,7 @@ export class LCUWebSocket extends EventEmitter {
         this.emit('error', error)
       })
       
-      this.ws.on('close', (code, reason) => {
+      this.ws.on('close', (code) => {
         Logger.info(`LCU WebSocket closed: code=${code}`)
         this.isConnecting = false
         this.ws = null
