@@ -56,11 +56,33 @@
 - 客户端热重启
 - 修复客户端结算页面异常
 
+## 功能预览 📸
+
+### 英雄排行榜
+<img src="assets/top.png" width="800" alt="英雄排行榜">
+查看当前版本各位置强势英雄，掌握版本答案。
+
+### 选人阶段 & 装备推荐
+<img src="assets/team.png" width="800" alt="选人阶段">
+智能识别当前对局，自动推荐最佳出装与符文配置。
+
+### 装备与符文详情
+<img src="assets/build.png" width="800" alt="装备符文详情">
+详细的技能加点、核心装备及符文搭配方案。
+
+### 历史战绩
+<img src="assets/history.png" width="800" alt="历史战绩">
+查询召唤师近期战绩，分析对局表现。
+
+### 海克斯符文大乱斗
+<img src="assets/mayhem.png" width="800" alt="符文大乱斗">
+专为娱乐模式优化的数据支持，助你快乐游戏。
+
 ## 快速开始 🚀
 
 ### 使用预构建版本
 1. 前往 [Releases](https://github.com/lzskyline/LeeSin/releases) 页面
-2. 下载最新版本的 `.exe` 文件（Windows）或 `.dmg` 文件（macOS）
+2. 下载最新版本的 `.exe` 文件
 3. 解压并运行 `LeeSin.exe` 即可
 
 ### 从源码构建
@@ -78,7 +100,24 @@ npm run electron:dev
 
 # 构建生产版本
 npm run build
+
+# 本地打包测试
+npm run package:win    # Windows
 ```
+
+### 发布新版本
+
+使用 GitHub Actions 自动发布（推荐）：
+
+```bash
+# 创建版本标签（格式：v1.0.0）
+git tag v1.0.0
+git push origin v1.0.0
+
+# GitHub Actions会自动构建并发布Windows版本
+```
+
+详细发布说明请查看 [RELEASE.md](RELEASE.md)
 
 ## 技术栈 💻
 

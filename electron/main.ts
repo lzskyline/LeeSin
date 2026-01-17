@@ -24,10 +24,10 @@ const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 860,
-    height: 900,
-    minWidth: 720,
-    minHeight: 700,
+    width: 840,
+    height: 910,
+    minWidth: 840,
+    minHeight: 710,
     frame: false,
     transparent: false,
     backgroundColor: '#010A13',

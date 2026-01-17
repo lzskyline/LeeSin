@@ -75,3 +75,6 @@ __pycache__/
 *.pid
 *.seed
 *.tgz
+
+# GitHub Actions
+!.github/workflows/*.yml

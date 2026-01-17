@@ -71,10 +71,13 @@ export function useLCU() {
     
     // 订阅自动化事件
     const unsubAction = window.electronAPI.automation.onActionExecuted((data: { action: string; success: boolean; message?: string }) => {
-      addNotification(
-        data.message || `${data.action} ${data.success ? '成功' : '失败'}`,
-        data.success ? 'success' : 'error'
-      )
+      // 只显示非空消息
+      if (data.message && data.message.trim() !== '') {
+        addNotification(
+          data.message || `${data.action} ${data.success ? '成功' : '失败'}`,
+          data.success ? 'success' : 'error'
+        )
+      }
     })
     
     return () => {

@@ -22,5 +22,10 @@
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true
+  },
+  "publish": {
+    "provider": "github",
+    "owner": "lzskyline",
+    "repo": "LeeSin"
   }
 }

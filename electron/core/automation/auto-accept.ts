@@ -32,10 +32,11 @@ export class AutoAccept {
     this.isExecuting = true
     
     try {
-      // 检查是否需要自动接受（排除训练模式和自定义房间）
+      // 检查是否需要自动接受（排除训练模式、自定义房间和组队模式）
       const queueId = await this.getCurrentQueueId()
       if (!this.shouldAutoAccept(queueId)) {
-        return { executed: false, success: false, message: 'Auto-accept not needed for this mode' }
+        // 对于这些模式，我们不执行任何操作，也不显示提示
+        return { executed: false, success: false, message: '' }
       }
       
       // 延迟以模拟人类行为
@@ -66,16 +67,23 @@ export class AutoAccept {
   private async getCurrentQueueId(): Promise<number> {
     try {
       const gameflow = await this.lcuClient.get<any>('/lol-gameflow/v1/session')
-      return gameflow?.gameData?.queue?.id || 0
+      // 从 gameData.queue.id 或 gameData.queueId 获取队列ID
+      const queueId = gameflow?.gameData?.queue?.id || gameflow?.gameData?.queueId || 0
+      Logger.debug(`Current queueId detected: ${queueId}`)
+      return queueId
     } catch {
       return 0
     }
   }
   
   private shouldAutoAccept(queueId: number): boolean {
-    // 训练模式 (2000) 和自定义游戏 (0) 不需要自动接受
-    const skipQueueIds = [0, 2000]
-    return !skipQueueIds.includes(queueId)
+    // 训练模式 (2000)、自定义游戏 (0)、组队模式 (3140) 不需要自动接受
+    const skipQueueIds = [0, 2000, 3140]  // 3140 = Team Builder Ranked
+    const shouldSkip = skipQueueIds.includes(queueId)
+    if (shouldSkip) {
+      Logger.info(`Skipping auto-accept for queueId: ${queueId}`)
+    }
+    return !shouldSkip
   }
   
   private sleep(ms: number): Promise<void> {

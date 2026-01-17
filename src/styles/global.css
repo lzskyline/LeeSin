@@ -2,21 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LOL风格字体 - Beaufort for LOL */
-@font-face {
-  font-family: 'Beaufort for LOL';
-  src: url('https://raw.githubusercontent.com/AmineMarnissi/leagueoflegends-template/main/fonts/Beaufort/BeaufortforLOL-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Beaufort for LOL';
-  src: url('https://raw.githubusercontent.com/AmineMarnissi/leagueoflegends-template/main/fonts/Beaufort/BeaufortforLOL-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
 /* 基础样式重置 */
 * {
   margin: 0;

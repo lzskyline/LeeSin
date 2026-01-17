@@ -27,6 +27,9 @@ export const LCU_ENDPOINTS = {
   READY_CHECK_ACCEPT: '/lol-matchmaking/v1/ready-check/accept',
   READY_CHECK: '/lol-matchmaking/v1/ready-check',
   
+  // 组队模式
+  TEAM_BUILDER_READY_CHECK_ACCEPT: '/lol-lobby-team-builder/v1/ready-check/accept',
+  
   // 英雄选择
   CHAMP_SELECT_SESSION: '/lol-champ-select/v1/session',
   CHAMP_SELECT_CURRENT: '/lol-champ-select/v1/current-champion',

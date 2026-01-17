@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "electron:dev": "chcp 65001 && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src electron --ext .ts,.tsx"
+    "lint": "eslint src electron --ext .ts,.tsx",
+    "package:win": "electron-builder --win --x64"
   },
   "dependencies": {
     "axios": "^1.6.7",

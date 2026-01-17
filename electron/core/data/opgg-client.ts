@@ -179,7 +179,13 @@ export class OPGGClient {
         url = OPGG_API.CHAMPION_BUILD(region, mode, championId, position, tier)
       }
       
+      Logger.debug(`Fetching OP.GG build: ${url}`)
       const response = await this.client.get<OPGGChampionBuildResponse>(url)
+      
+      // 添加更详细的日志
+      if (championId === 89) { // Leona
+        Logger.debug(`Leona response data: ${JSON.stringify(response.data, null, 2)}`)
+      }
       
       // Parse based on mode
       let build: CachedChampionBuild | null
@@ -341,13 +347,18 @@ export class OPGGClient {
     // Arena summary
     const avgStats = data.summary?.average_stats
     const summary = avgStats ? {
-      winRate: avgStats.play > 0 ? avgStats.win! / avgStats.play : 0,
+      winRate: (avgStats.play || 0) > 0 ? (avgStats.win || 0) / (avgStats.play || 1) : 0,
       pickRate: avgStats.pick_rate,
       banRate: avgStats.ban_rate,
       tier: avgStats.tier,
-      averagePlace: avgStats.play > 0 ? avgStats.total_place! / avgStats.play : 4,
-      firstRate: avgStats.play > 0 ? avgStats.first_place! / avgStats.play : 0,
-    } : {}
+      averagePlace: (avgStats.play || 0) > 0 ? (avgStats.total_place || 0) / (avgStats.play || 1) : 4,
+      firstRate: (avgStats.play || 0) > 0 ? (avgStats.first_place || 0) / (avgStats.play || 1) : 0,
+    } : {
+      winRate: 0,
+      pickRate: 0,
+      averagePlace: 4,
+      firstRate: 0
+    }
     
     // Get skills
     const skillMasteries = data.skill_masteries || []

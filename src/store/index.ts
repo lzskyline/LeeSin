@@ -29,15 +29,19 @@ export const useGameFlowStore = create<GameFlowState>((set) => ({
 interface ChampSelectState {
   session: ChampSelectSession | null
   timer: { remaining: number; phase: string }
+  hasAutoNavigatedToBuild: boolean  // 是否已自动跳转到出装页面
   setSession: (session: ChampSelectSession | null) => void
   setTimer: (timer: { remaining: number; phase: string }) => void
+  setHasAutoNavigatedToBuild: (value: boolean) => void
 }
 
 export const useChampSelectStore = create<ChampSelectState>((set) => ({
   session: null,
   timer: { remaining: 0, phase: '' },
+  hasAutoNavigatedToBuild: false,
   setSession: (session) => set({ session }),
   setTimer: (timer) => set({ timer }),
+  setHasAutoNavigatedToBuild: (value) => set({ hasAutoNavigatedToBuild: value }),
 }))
 
 // 设置状态
@@ -90,4 +94,19 @@ export const useNotificationStore = create<NotificationState>((set) => ({
   removeNotification: (id) => set((state) => ({
     notifications: state.notifications.filter(n => n.id !== id)
   })),
+}))
+
+// 出装页面状态（用于在页面切换时保持选中的英雄）
+interface BuildPageState {
+  selectedChampionId: number | null
+  selectedMode: string
+  setSelectedChampionId: (id: number | null) => void
+  setSelectedMode: (mode: string) => void
+}
+
+export const useBuildPageStore = create<BuildPageState>((set) => ({
+  selectedChampionId: null,
+  selectedMode: 'ranked',
+  setSelectedChampionId: (id) => set({ selectedChampionId: id }),
+  setSelectedMode: (mode) => set({ selectedMode: mode }),
 }))

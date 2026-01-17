@@ -91,6 +91,10 @@ export class LCUClient {
     await this.post(LCU_ENDPOINTS.READY_CHECK_ACCEPT)
   }
   
+  async acceptTeamBuilderReadyCheck(): Promise<void> {
+    await this.post(LCU_ENDPOINTS.TEAM_BUILDER_READY_CHECK_ACCEPT)
+  }
+  
   async getReadyCheck(): Promise<any> {
     return this.get(LCU_ENDPOINTS.READY_CHECK)
   }

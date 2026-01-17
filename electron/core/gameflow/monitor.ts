@@ -269,10 +269,12 @@ export class GameFlowMonitor extends EventEmitter {
   private startTimerBroadcast(): void {
     this.stopTimerBroadcast()
     
+    // 使用100ms间隔更新，避免慢一秒的问题
     this.timerInterval = setInterval(() => {
       if (this.currentSession && this.phaseStartTime > 0) {
         // 动态计算剩余时间：初始剩余时间 - 已经过的时间
-        const elapsedSeconds = Math.floor((Date.now() - this.phaseStartTime) / 1000)
+        // 增加500ms的补偿，让Math.floor向下取整时更接近实际秒数，避免显示慢一秒
+        const elapsedSeconds = Math.floor((Date.now() - this.phaseStartTime + 500) / 1000)
         const remaining = Math.max(0, this.phaseInitialRemaining - elapsedSeconds)
         
         this.broadcastToRenderer('champselect:timer-tick', {
@@ -280,7 +282,7 @@ export class GameFlowMonitor extends EventEmitter {
           phase: this.currentTimerPhase,
         })
       }
-    }, 1000)
+    }, 100)
   }
   
   private stopTimerBroadcast(): void {

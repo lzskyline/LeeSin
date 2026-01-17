@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Clock, Users, Swords } from 'lucide-react'
-import { useChampSelectStore, useDataStore } from '../../store'
-import BuildDetail from '../../components/BuildDetail'
+import { Clock, Users, Swords, ExternalLink } from 'lucide-react'
+import { useChampSelectStore, useDataStore, useGameFlowStore } from '../../store'
+import { useNavigate } from 'react-router-dom'
+import CareerDetail from '../../components/CareerDetail'
 import type { ChampSelectSession, ChampSelectPlayer } from '../../../shared/types'
 
 export default function ChampSelect() {
   const { session, timer } = useChampSelectStore()
+  const { phase } = useGameFlowStore()
   const { champions } = useDataStore()
+  const navigate = useNavigate()
   const [selectedPlayer, setSelectedPlayer] = useState<ChampSelectPlayer | null>(null)
-  
+  const [redirectedChampionId, setRedirectedChampionId] = useState<number>(0)
+
   const championsMap = new Map(champions.map(c => [c.id, c]))
-  
+
   // 检查是否有有效的计时器数据
   const hasValidTimer = timer && timer.remaining > 0
   
@@ -23,46 +27,57 @@ export default function ChampSelect() {
     return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${id}.png`
   }
 
-  // 获取当前显示的英雄ID
-  const getDisplayChampionId = (): number => {
-    // 优先显示选中的队友英雄
-    if (selectedPlayer && selectedPlayer.championId > 0) {
-      return selectedPlayer.championId
-    }
-    // 否则显示自己的英雄
-    const localPlayer = session?.myTeam.find(p => p.cellId === session?.localPlayerCellId)
-    if (localPlayer && localPlayer.championId > 0) {
-      return localPlayer.championId
-    }
-    return 0
+
+
+  // 跳转到出装页面
+  const goToBuildPage = (championId: number, position: string) => {
+    const normalizedPos = normalizePosition(position)
+    navigate(`/build?championId=${championId}&position=${normalizedPos}`)
   }
 
-  // 检查英雄数据是否加载完成
-  const isChampionDataReady = champions && champions.length > 0
-
-  // 获取当前显示英雄的位置
-  const getDisplayPosition = (): string => {
-    if (selectedPlayer) {
-      return normalizePosition(selectedPlayer.assignedPosition)
-    }
-    const localPlayer = session?.myTeam.find(p => p.cellId === session?.localPlayerCellId)
-    return normalizePosition(localPlayer?.assignedPosition)
-  }
-
-  // 自动选择自己为默认显示
+  // 自动选择自己为默认显示，并检测是否所有英雄已锁定
   useEffect(() => {
     if (session) {
       const localPlayer = session.myTeam.find(p => p.cellId === session.localPlayerCellId)
-      // 只有在本地玩家已经选择了英雄时才自动选中
-      if (localPlayer && localPlayer.championId > 0 && !selectedPlayer) {
-        setSelectedPlayer(localPlayer)
+
+      if (localPlayer) {
+        // 只有在本地玩家已经选择了英雄且当前没有选中任何玩家时，才自动选中自己
+        // 或者如果已经选中了自己，更新自己的信息
+        if (localPlayer.championId > 0 || localPlayer.championPickIntent > 0) {
+          if (!selectedPlayer) {
+            setSelectedPlayer(localPlayer)
+          } else if (selectedPlayer.cellId === localPlayer.cellId) {
+             // 保持选中状态，只更新数据
+             setSelectedPlayer(localPlayer)
+          }
+        }
       }
-      // 如果当前选中的玩家没有英雄，清除选择
-      if (selectedPlayer && selectedPlayer.championId === 0) {
-        setSelectedPlayer(null)
+
+      // 如果选中的是其他玩家，也要更新该玩家的数据
+      if (selectedPlayer && session) {
+        const updatedSelectedPlayer = [...session.myTeam, ...session.theirTeam].find(p => p.cellId === selectedPlayer.cellId)
+        if (updatedSelectedPlayer) {
+           // 只有当关键信息改变时才更新，避免频繁刷新导致 UI 重置
+           if (updatedSelectedPlayer.championId !== selectedPlayer.championId || 
+               updatedSelectedPlayer.championPickIntent !== selectedPlayer.championPickIntent) {
+               setSelectedPlayer(updatedSelectedPlayer)
+           }
+        }
+      }
+
+      // 检查本地玩家是否已锁定英雄，如果是则自动跳转到出装页面
+      // 必须确保当前确实处于选人阶段，防止退出房间后误跳转
+      if (phase === 'ChampSelect' && localPlayer && localPlayer.championId > 0 && hasLocalPlayerLocked(session)) {
+        if (redirectedChampionId !== localPlayer.championId) {
+          setRedirectedChampionId(localPlayer.championId)
+          const normalizedPos = normalizePosition(localPlayer.assignedPosition)
+          setTimeout(() => {
+            navigate(`/build?championId=${localPlayer.championId}&position=${normalizedPos}`)
+          }, 500)
+        }
       }
     }
-  }, [session])
+  }, [session, navigate, redirectedChampionId, phase])
   
   if (!session) {
     return (
@@ -76,11 +91,6 @@ export default function ChampSelect() {
   
   const myAction = findMyAction(session)
   const isMyTurn = myAction?.isInProgress || false
-  const displayChampionId = getDisplayChampionId()
-  const displayPosition = getDisplayPosition()
-
-  // 判断是否支持应用符文/技能（排位、匹配、大乱斗支持）
-  const canApply = true // 选人阶段都可以应用
   
   return (
     <div className="h-full flex flex-col p-3 gap-3">
@@ -130,8 +140,8 @@ export default function ChampSelect() {
                     player={player}
                     isLocal={player.cellId === session.localPlayerCellId}
                     isSelected={selectedPlayer?.cellId === player.cellId}
-                    championName={getChampionName(player.championId)}
-                    championIconUrl={getChampionIconUrl(player.championId)}
+                    getChampionName={getChampionName}
+                    getChampionIconUrl={getChampionIconUrl}
                     onClick={() => setSelectedPlayer(player)}
                   />
                 ))}
@@ -153,48 +163,37 @@ export default function ChampSelect() {
                     player={player}
                     isLocal={false}
                     isSelected={selectedPlayer?.cellId === player.cellId}
-                    championName={getChampionName(player.championId)}
-                    championIconUrl={getChampionIconUrl(player.championId)}
+                    getChampionName={getChampionName}
+                    getChampionIconUrl={getChampionIconUrl}
                     onClick={() => setSelectedPlayer(player)}
                   />
                 ))}
               </div>
             </div>
           </div>
-
-          {/* 禁用信息 - 紧凑显示 */}
-          <div className="lol-card p-2">
-            <div className="flex gap-2 text-[10px]">
-              <div className="flex-1">
-                <span className="text-lol-text-muted">我方禁用: </span>
-                <span className="text-lol-text-secondary">
-                  {session.bans.myTeamBans.filter((id: number) => id > 0).map((id: number) => getChampionName(id)).join(', ') || '无'}
-                </span>
-              </div>
-              <div className="flex-1">
-                <span className="text-lol-text-muted">敌方禁用: </span>
-                <span className="text-lol-text-secondary">
-                  {session.bans.theirTeamBans.filter((id: number) => id > 0).map((id: number) => getChampionName(id)).join(', ') || '无'}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
         
-        {/* 右侧：出装详情 */}
+        {/* 右侧：详情面板 */}
         <div className="flex-1 lol-card p-3 min-h-0 overflow-hidden flex flex-col">
-          {displayChampionId > 0 ? (
-            <BuildDetail
-              championId={displayChampionId}
-              position={displayPosition}
-              mode="ranked"
-              showApplyButtons={canApply}
-            />
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-lol-text-muted">
-              <Swords className="w-12 h-12 mb-3 opacity-50" />
-              <p className="text-sm">选择英雄后显示出装推荐</p>
-            </div>
+          <div className="flex-1 min-h-0">
+            <CareerDetail player={selectedPlayer} />
+          </div>
+          
+          {/* 跳转到出装页面按钮 - 当选择了一个锁定了英雄或预选了英雄的玩家时显示 */}
+          {selectedPlayer && (selectedPlayer.championId > 0 || selectedPlayer.championPickIntent > 0) && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3 pt-3 border-t border-lol-border/50 flex gap-2"
+            >
+              <button
+                onClick={() => goToBuildPage(selectedPlayer.championId || selectedPlayer.championPickIntent, selectedPlayer.assignedPosition)}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-b from-lol-gold/20 to-lol-gold-dark/20 border border-lol-gold hover:from-lol-gold/30 hover:to-lol-gold-dark/30 rounded transition-colors group"
+              >
+                <span className="text-sm font-medium text-lol-gold">查看出装推荐</span>
+                <ExternalLink className="w-4 h-4 text-lol-gold group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </motion.div>
           )}
         </div>
       </div>
@@ -207,15 +206,15 @@ function PlayerCard({
   player, 
   isLocal,
   isSelected,
-  championName,
-  championIconUrl,
+  getChampionName,
+  getChampionIconUrl,
   onClick,
 }: { 
   player: ChampSelectPlayer
   isLocal: boolean
   isSelected: boolean
-  championName: string
-  championIconUrl: string
+  getChampionName: (id: number) => string
+  getChampionIconUrl: (id: number) => string
   onClick: () => void
 }) {
   const positionLabels: Record<string, string> = {
@@ -226,6 +225,10 @@ function PlayerCard({
     utility: '辅助',
     fill: '补位',
   }
+
+  const activeChampionId = player.championId > 0 ? player.championId : player.championPickIntent
+  const displayChampionName = activeChampionId > 0 ? getChampionName(activeChampionId) : '选择中...'
+  const displayIconUrl = activeChampionId > 0 ? getChampionIconUrl(activeChampionId) : ''
 
   return (
     <motion.div 
@@ -243,10 +246,10 @@ function PlayerCard({
     >
       {/* 英雄头像 - 固定尺寸占位符 */}
       <div className="flex-shrink-0 w-9 h-9 rounded-full bg-lol-bg-primary flex items-center justify-center overflow-hidden border border-lol-border">
-        {player.championId > 0 ? (
+        {activeChampionId > 0 ? (
           <img 
-            src={championIconUrl}
-            alt={championName}
+            src={displayIconUrl}
+            alt={displayChampionName}
             className="w-full h-full object-cover"
             loading="lazy"
             onError={(e) => {
@@ -261,7 +264,7 @@ function PlayerCard({
       
       <div className="flex-1 min-w-0 overflow-hidden">
         <div className="text-sm text-lol-text-primary truncate">
-          {player.championId > 0 ? championName : '选择中...'}
+          {displayChampionName}
         </div>
         <div className="text-[10px] text-lol-text-muted truncate">
           {positionLabels[player.assignedPosition?.toLowerCase()] || player.assignedPosition || ''}
@@ -305,3 +308,40 @@ function normalizePosition(position?: string): string {
   }
   return map[position.toLowerCase()] || 'mid'
 }
+
+// 判断本地玩家是否已锁定英雄
+function hasLocalPlayerLocked(session: ChampSelectSession): boolean {
+  if (!session) return false
+  
+  // 检查是否处于 BAN_PICK 之后的阶段
+  if (session.timer.phase === 'FINALIZATION' || session.timer.phase === 'GAME_START') {
+    return true
+  }
+  
+  // 检查是否有未完成的 pick 动作
+  const myAction = findMyAction(session)
+  if (myAction && myAction.type === 'pick' && !myAction.completed) {
+    return false
+  }
+  
+  // 检查是否已经选择了英雄
+  const localPlayer = session.myTeam.find(p => p.cellId === session.localPlayerCellId)
+  if (!localPlayer || localPlayer.championId === 0) {
+    return false
+  }
+
+  // 遍历所有我的 pick 动作，检查是否有已完成的
+  let hasCompletedPick = false
+  for (const round of session.actions) {
+    for (const action of round) {
+      if (action.actorCellId === session.localPlayerCellId && action.type === 'pick') {
+        if (action.completed) {
+          hasCompletedPick = true
+        }
+      }
+    }
+  }
+  
+  return hasCompletedPick
+}
+

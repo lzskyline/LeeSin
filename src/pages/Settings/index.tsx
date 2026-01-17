@@ -231,17 +231,17 @@ export default function Settings() {
               className="lol-input w-full mb-3"
             />
             
-            <div className="grid grid-cols-6 gap-2 max-h-60 overflow-auto">
+            <div className="grid grid-cols-4 gap-1 max-h-60 overflow-auto">
               {filteredChampions.map((champion) => {
                 const isSelected = currentPreferred.includes(champion.id)
-                
+
                 return (
                   <button
                     key={champion.id}
                     onClick={() => addPreferredChampion(champion.id)}
                     disabled={isSelected}
                     className={`
-                      p-2 rounded text-xs text-center transition-colors
+                      px-1.5 py-1 rounded text-[11px] text-center transition-colors truncate
                       ${isSelected
                         ? 'bg-lol-gold/20 text-lol-gold border border-lol-gold-dark'
                         : 'bg-lol-bg-tertiary hover:bg-lol-bg-secondary text-lol-text-primary'
@@ -297,17 +297,17 @@ export default function Settings() {
           
           {/* 英雄选择 */}
           <div className="flex-1">
-            <div className="grid grid-cols-6 gap-2 max-h-40 overflow-auto">
+            <div className="grid grid-cols-4 gap-1 max-h-40 overflow-auto">
               {champions.map((champion) => {
                 const isSelected = bannedChampions.includes(champion.id)
-                
+
                 return (
                   <button
                     key={champion.id}
                     onClick={() => addBannedChampion(champion.id)}
                     disabled={isSelected}
                     className={`
-                      p-2 rounded text-xs text-center transition-colors
+                      px-1.5 py-1 rounded text-[11px] text-center transition-colors truncate
                       ${isSelected
                         ? 'bg-lol-error/20 text-lol-error border border-lol-error/30'
                         : 'bg-lol-bg-tertiary hover:bg-lol-bg-secondary text-lol-text-primary'

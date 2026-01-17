@@ -370,45 +370,45 @@ export default function Career() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="lol-card p-4"
+        className="lol-card p-3"
       >
-        <h3 className="text-sm text-lol-text-secondary mb-3">最近 {totalGames} 场对局</h3>
-        <div className="grid grid-cols-4 gap-4 text-center">
+        <h3 className="text-xs text-lol-text-secondary mb-2">最近 {totalGames} 场对局</h3>
+        <div className="grid grid-cols-4 gap-3 text-center">
           <div>
-            <p className="text-2xl font-display text-lol-gold">{winRate}%</p>
-            <p className="text-xs text-lol-text-muted">胜率</p>
+            <p className="text-xl font-display text-lol-gold">{winRate}%</p>
+            <p className="text-[10px] text-lol-text-muted">胜率</p>
           </div>
           <div>
-            <p className="text-lg">
+            <p className="text-sm">
               <span className="text-lol-success">{wins}胜</span>
               <span className="text-lol-text-muted"> / </span>
               <span className="text-lol-error">{losses}负</span>
             </p>
-            <p className="text-xs text-lol-text-muted">胜/负</p>
+            <p className="text-[10px] text-lol-text-muted">胜/负</p>
           </div>
           <div>
-            <p className="text-lg text-lol-text-primary">
+            <p className="text-sm text-lol-text-primary">
               {avgKills} / {avgDeaths} / {avgAssists}
             </p>
-            <p className="text-xs text-lol-text-muted">平均KDA</p>
+            <p className="text-[10px] text-lol-text-muted">平均KDA</p>
           </div>
           <div>
-            <p className="text-lg text-lol-text-primary">
+            <p className="text-sm text-lol-text-primary">
               {totalGames > 0 ? getKDA(
                 matches.reduce((a, m) => a + m.kills, 0),
                 matches.reduce((a, m) => a + m.deaths, 0),
                 matches.reduce((a, m) => a + m.assists, 0)
               ) : '0'}
             </p>
-            <p className="text-xs text-lol-text-muted">KDA比</p>
+            <p className="text-[10px] text-lol-text-muted">KDA比</p>
           </div>
         </div>
       </motion.div>
 
       {/* 对局历史列表 */}
-      <div className="space-y-2">
-        <h3 className="text-sm text-lol-text-secondary">对局历史</h3>
-        
+      <div className="space-y-1.5">
+        <h3 className="text-xs text-lol-text-secondary">对局历史</h3>
+
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <RefreshCw size={24} className="animate-spin text-lol-gold" />
@@ -418,62 +418,62 @@ export default function Career() {
             暂无对局记录
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {matches.map((match, index) => (
               <motion.div
                 key={match.gameId}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`flex items-center gap-3 p-3 rounded-lg border ${
-                  match.win 
-                    ? 'bg-lol-success/10 border-lol-success/30' 
+                className={`flex items-center gap-2 p-2 rounded-lg border ${
+                  match.win
+                    ? 'bg-lol-success/10 border-lol-success/30'
                     : 'bg-lol-error/10 border-lol-error/30'
                 }`}
               >
                 {/* 胜负指示条 */}
-                <div className={`w-1 h-12 rounded-full flex-shrink-0 ${match.win ? 'bg-lol-success' : 'bg-lol-error'}`} />
-                
+                <div className={`w-1 h-10 rounded-full flex-shrink-0 ${match.win ? 'bg-lol-success' : 'bg-lol-error'}`} />
+
                 {/* 英雄图标 */}
                 <img
                   src={`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${match.championId}.png`}
                   alt=""
-                  className="w-12 h-12 rounded-lg border border-lol-border-dark flex-shrink-0"
+                  className="w-10 h-10 rounded-lg border border-lol-border-dark flex-shrink-0"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
                     target.style.display = 'none'
                   }}
                 />
-                
+
                 {/* 对局信息 - 固定宽度 */}
-                <div className="w-[120px] flex-shrink-0">
-                  <div className="flex items-center gap-2">
-                    <span className={`font-medium ${match.win ? 'text-lol-success' : 'text-lol-error'}`}>
+                <div className="w-[100px] flex-shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-xs font-medium ${match.win ? 'text-lol-success' : 'text-lol-error'}`}>
                       {match.win ? '胜利' : '失败'}
                     </span>
-                    <span className="text-xs text-lol-text-muted">
+                    <span className="text-[10px] text-lol-text-muted">
                       {formatDuration(match.gameDuration)}
                     </span>
                   </div>
-                  <div className="text-xs text-lol-text-secondary mt-1">
-                    <span className="px-1.5 py-0.5 rounded bg-lol-bg-tertiary">
+                  <div className="text-[10px] text-lol-text-secondary mt-0.5">
+                    <span className="px-1 py-0.5 rounded bg-lol-bg-tertiary">
                       {match.gameMode}
                     </span>
                   </div>
                 </div>
-                
+
                 {/* KDA - 固定宽度 */}
-                <div className="w-[100px] text-center flex-shrink-0">
-                  <p className="font-medium text-lol-text-primary">
+                <div className="w-[80px] text-center flex-shrink-0">
+                  <p className="text-xs font-medium text-lol-text-primary">
                     {match.kills} / <span className="text-lol-error">{match.deaths}</span> / {match.assists}
                   </p>
-                  <p className="text-xs text-lol-text-muted">
+                  <p className="text-[10px] text-lol-text-muted">
                     {getKDA(match.kills, match.deaths, match.assists)} KDA
                   </p>
                 </div>
-                
+
                 {/* 装备 - 固定宽度 */}
-                <div className="flex items-center gap-1 w-[200px] flex-shrink-0">
+                <div className="flex items-center gap-0.5 w-[170px] flex-shrink-0">
                   {[0, 1, 2, 3, 4, 5].map((idx) => {
                     const itemId = match.items[idx]
                     return itemId && itemId > 0 ? (
@@ -481,14 +481,14 @@ export default function Career() {
                         key={idx}
                         src={`https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${itemId}.png`}
                         alt=""
-                        className="w-7 h-7 rounded border border-lol-border-dark"
+                        className="w-6 h-6 rounded border border-lol-border-dark"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
                           target.style.display = 'none'
                         }}
                       />
                     ) : (
-                      <div key={idx} className="w-7 h-7 rounded bg-lol-bg-tertiary/50 border border-lol-border-dark" />
+                      <div key={idx} className="w-6 h-6 rounded bg-lol-bg-tertiary/50 border border-lol-border-dark" />
                     )
                   })}
                   {/* 饰品位 */}
@@ -496,26 +496,26 @@ export default function Career() {
                     <img
                       src={`https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${match.items[6]}.png`}
                       alt=""
-                      className="w-6 h-6 rounded-full border border-lol-gold-dark ml-1"
+                      className="w-5 h-5 rounded-full border border-lol-gold-dark ml-0.5"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
                         target.style.display = 'none'
                       }}
                     />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-lol-bg-tertiary/50 border border-lol-border-dark ml-1" />
+                    <div className="w-5 h-5 rounded-full bg-lol-bg-tertiary/50 border border-lol-border-dark ml-0.5" />
                   )}
                 </div>
 
-                {/* CS和金币 - 固定宽度 */}
-                <div className="w-[60px] text-right text-sm flex-shrink-0">
-                  <p className="text-lol-text-secondary">{match.cs} CS</p>
-                  <p className="text-lol-gold">{(match.gold / 1000).toFixed(1)}k</p>
-                </div>
-                
-                {/* 时间 */}
-                <div className="text-xs text-lol-text-muted flex-shrink-0 w-[70px] text-right">
-                  {formatTime(match.gameCreation)}
+                {/* CS、金币和时间 - 靠右展示 */}
+                <div className="flex items-center gap-3 ml-auto text-xs flex-shrink-0">
+                  <div className="text-right w-[50px]">
+                    <p className="text-lol-text-secondary">{match.cs} CS</p>
+                    <p className="text-lol-gold text-[10px]">{(match.gold / 1000).toFixed(1)}k</p>
+                  </div>
+                  <div className="text-[10px] text-lol-text-muted w-[60px] text-right">
+                    {formatTime(match.gameCreation)}
+                  </div>
                 </div>
               </motion.div>
             ))}
