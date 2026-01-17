@@ -31,6 +31,7 @@ jobs:
         run: npm ci
 
       - name: Update version from tag
+        shell: bash
         run: |
           TAG=${GITHUB_REF#refs/tags/}
           VERSION=${TAG#v}
@@ -38,6 +39,7 @@ jobs:
           echo "Building version: $VERSION"
 
       - name: Build and package
+        shell: bash
         run: |
           npm run build
           npm run package:${{ matrix.package_suffix }}
